@@ -7,6 +7,7 @@ Game Parameters and Features:
   * Is chosen from the text file in the [`google-10000-english` repository.](https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-no-swears.txt)
   * Has a character length in the range \[5, 12] inclusive.
   * Is composed only of alphabetical characters (e.g., no special characters, no punctutation symbols, etc.)
+  * Is a single word and NOT a phrase or sentence.
 * Up to 6 maximum tries to correctly guess the word.
 * Save in-progress games in 1 of 3 game save slots.
 * Saving more than 3 games will overwrite an existing game save slot of the player's choice.
