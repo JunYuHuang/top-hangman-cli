@@ -69,18 +69,6 @@
       - loser message (computer player won)
       - revealed word message
     - return to break out of outer game loop
-  - if the word guesser won
-    - word guesser wins if:
-      - if the size of correct_char_guesses equals the count of unique chars in the word OR
-      - word_guesses has at least 1 string element and its last string matches the word exactly
-    - game is over and word guesser won
-    - display
-      - hangman ASCII art / string
-      - fully revealed word
-      - incorrected char guesses (if any)
-      - word guesser winner message
-      - revealed word message
-    - return out of outer game loop
   - input = nil
   - while true
     - display
@@ -121,6 +109,18 @@
   - if the input is a whole word guess attempt
     - append it to the string array word_guesses
     - continue to next turn (next outer game loop)
+  - if the word guesser won
+    - word guesser wins if:
+      - if the size of correct_char_guesses equals the count of unique chars in the word OR
+      - word_guesses has at least 1 string element and its last string matches the word exactly
+    - game is over and word guesser won
+    - display
+      - hangman ASCII art / string
+      - fully revealed word
+      - incorrected char guesses (if any)
+      - word guesser winner message
+      - revealed word message
+    - return out of outer game loop
 
 ## Expanded Pseudocode / Partial Code
 
