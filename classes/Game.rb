@@ -1,3 +1,5 @@
+require 'set'
+
 class Game
   @@wrong_guesses_to_hangman = {
     6 => [
@@ -78,7 +80,6 @@ class Game
   attr_accessor(:correct_char_guesses)
   attr_accessor(:word_guesses)
 
-  # TODO - to test manually
   def play
     loop do
       unless is_word_set?
@@ -145,7 +146,6 @@ class Game
     words[random_pos]
   end
 
-  # TODO - to test manually
   def get_guesser_input
     is_valid_input = true
     last_input = nil
@@ -178,10 +178,18 @@ class Game
       end
     when :word_guess
       @word_guesses.push(data)
+      @correct_char_guesses.merge(data.split('')) if data == @word
     end
   end
 
-  # TODO - to test manually
+  def clear_console
+    if RUBY_PLATFORM =~ /win32|win64|\.NET|windows|cygwin|mingw32/i
+      system('cls')
+    else
+      system('clear')
+    end
+  end
+
   def print_hangman
     count = count_wrong_guesses
     is_valid_guesses_left = count >= 0 && count <= @max_wrong_guesses
@@ -189,25 +197,21 @@ class Game
     puts("#{@@wrong_guesses_to_hangman[wrong_guesses].join}\n")
   end
 
-  # TODO - to test manually
   def print_masked_word
     word = get_masked_word.join(' ')
     puts("#{word}\n\n")
   end
 
-  # TODO - to test manually
   def print_wrong_char_guesses
-    res = @wrong_char_guesses.to_a.sort.to_s.slice(1..-2)
-    puts("#{res}\n\n")
+    res = @wrong_char_guesses.to_a.sort.map { |char| char.upcase }
+    puts("#{res.join(', ')}\n\n")
   end
 
-  # TODO - to test manually
   def print_wrong_guess_tries_left
     count = @max_wrong_guesses - count_wrong_guesses
     puts("Wrong guess attempts left: #{count}\n")
   end
 
-  # TODO - to test manually
   def print_guesser_prompt(is_valid, input)
     res = [
       "The word is #{@word.size} English alphabet characters long.\n",
@@ -217,9 +221,8 @@ class Game
     puts(res.join)
   end
 
-  # TODO - to test manually
   def print_game_end_result
-    player_result_msg = did_guesser_win ? "You guessed the word!" : "Better luck next time."
+    player_result_msg = did_guesser_win?() ? "You guessed the word!" : "Better luck next time."
     res = [
       "Game ended: #{player_result_msg}\n",
       "The word was '#{@word.upcase}'.\n"
@@ -227,16 +230,16 @@ class Game
     puts(res.join)
   end
 
-  # TODO - to test manually
   def print_game_over_screen
+    clear_console
     print_hangman
     print_masked_word
     print_wrong_char_guesses
     print_game_end_result
   end
 
-  # TODO - to test manually
   def print_guesser_turn_screen(is_valid, input)
+    clear_console
     print_hangman
     print_masked_word
     print_wrong_char_guesses

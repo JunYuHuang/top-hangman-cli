@@ -1,3 +1,5 @@
-require_relative 'classes/index'
+require_relative 'classes/Game'
+require_relative 'classes/WordsList'
 
-# TODO
+game = Game.new(WordsList)
+game.play
