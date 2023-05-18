@@ -80,7 +80,18 @@ class Game
 
   # TODO - to test manually
   def play
-    # TODO
+    loop do
+      unless is_word_set?
+        @word = get_random_word
+      end
+
+      update_game(get_guesser_input)
+
+      if did_guesser_lose? || did_guesser_win?
+        print_game_over_screen
+        return
+      end
+    end
   end
 
   def is_word_set?
