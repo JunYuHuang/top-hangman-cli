@@ -1,6 +1,6 @@
 class Game
-  @@guesses_left_to_hangman = {
-    0 => [
+  @@wrong_guesses_to_hangman = {
+    6 => [
       "  ____\n",
       " |    |\n",
       "_O_   |\n",
@@ -8,7 +8,7 @@ class Game
       "/ \\   |\n",
       "  ____|____\n"
     ],
-    1 => [
+    5 => [
       "  ____\n",
       " |    |\n",
       "_O_   |\n",
@@ -16,7 +16,7 @@ class Game
       "/     |\n",
       "  ____|____\n"
     ],
-    2 => [
+    4 => [
       "  ____\n",
       " |    |\n",
       "_O_   |\n",
@@ -32,7 +32,7 @@ class Game
       "      |\n",
       "  ____|____\n"
     ],
-    4 => [
+    2 => [
       "  ____\n",
       " |    |\n",
       " O    |\n",
@@ -40,7 +40,7 @@ class Game
       "      |\n",
       "  ____|____\n"
     ],
-    5 => [
+    1 => [
       "  ____\n",
       " |    |\n",
       " O    |\n",
@@ -48,7 +48,7 @@ class Game
       "      |\n",
       "  ____|____\n"
     ],
-    6 => [
+    0 => [
       "  ____\n",
       " |    |\n",
       "      |\n",
@@ -114,6 +114,10 @@ class Game
     true
   end
 
+  def count_wrong_guesses
+    # TODO
+  end
+
   # TODO - write tests for
   def did_guesser_lose?
     # wrong_word_guesses = @word_guesses.select { |w| w != @word }
@@ -136,6 +140,10 @@ class Game
 
   def get_guesser_input
     # TODO - to test manually
+  end
+
+  def update_game(input)
+    # TODO
   end
 
   def print_hangman
