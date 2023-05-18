@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 require_relative '../classes/Game'
 require_relative '../classes/WordsList'
 
-RSpec.describe "Game Class" do
+RSpec.describe "Game" do
   describe "initialize" do
     it "works" do
       game = Game.new(WordsList)
@@ -10,4 +10,6 @@ RSpec.describe "Game Class" do
       expect(game.word.size).to eq(0)
     end
   end
+
+
 end
