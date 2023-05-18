@@ -106,23 +106,27 @@ RSpec.describe "Game" do
   end
 
   describe "is_valid_word_guess?" do
-    it "returns false if called with 'was'" do
+    it "returns false if called with a guess whose size is less than the word's size" do
       game = Game.new(WordsList)
+      game.word = 'apple'
       expect(game.is_valid_word_guess?('was')).to eq(false)
     end
 
-    it "returns false if called with 'supermegalongword'" do
+    it "returns false if called with a guess whose size is greater than the word's size" do
       game = Game.new(WordsList)
+      game.word = 'apple'
       expect(game.is_valid_word_guess?('supermegalongword')).to eq(false)
     end
 
-    it "returns false if called with 'badword!'" do
+    it "returns false if called with a guess that contains non-alphabet chars but is the same length as the word" do
       game = Game.new(WordsList)
+      game.word = 'buzzkill'
       expect(game.is_valid_word_guess?('badword!')).to eq(false)
     end
 
-    it "returns true if called with 'excellent'" do
+    it "returns true if called with a guess that contains only alphabet chars and is the same length as the word" do
       game = Game.new(WordsList)
+      game.word = 'blackjack'
       expect(game.is_valid_word_guess?('excellent')).to eq(true)
     end
   end

@@ -107,8 +107,7 @@ class Game
 
   def is_valid_word_guess?(word)
     return false if word.class != String
-    return false if word.size < @min_word_size
-    return false if word.size > @max_word_size
+    return false if word.size != @word.size
     word.each_char do |char|
       return false unless is_alpha_char?(char)
     end
