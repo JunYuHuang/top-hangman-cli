@@ -131,7 +131,170 @@ RSpec.describe "Game" do
     end
   end
 
-  # TODO - various missing tests
+  describe "count_wrong_guesses" do
+    it "returns 3 if called and guesser made 3 wrong char guesses" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
+      expect(game.count_wrong_guesses).to eq(3)
+    end
+
+    it "returns 5 if called and guesser made 3 wrong char guesses and 2 wrong word guesses" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
+      game.word_guesses = ['daddy', 'eagle']
+      expect(game.count_wrong_guesses).to eq(5)
+    end
+
+    it "returns 5 if called and guesser made 3 wrong char guesses, 2 wrong word guesses, and 1 correct word guess" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
+      game.word_guesses = ['daddy', 'eagle', 'apple']
+      expect(game.count_wrong_guesses).to eq(5)
+    end
+  end
+
+  describe "did_guesser_lose?" do
+    it "returns false if called and guesser has made less than the max count of wrong guesses" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
+      game.word_guesses = ['daddy', 'eagle']
+      expect(game.did_guesser_lose?).to eq(false)
+    end
+
+    it "returns false if called and guesser has made 1 less than the max count of wrong guesses and made the correct word guess" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
+      game.word_guesses = ['daddy', 'eagle', 'apple']
+      expect(game.did_guesser_lose?).to eq(false)
+    end
+
+    it "returns true if called and guesser has made exactly the max count of wrong guesses" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
+      game.word_guesses = ['daddy', 'eagle', 'cabin']
+      expect(game.did_guesser_lose?).to eq(true)
+    end
+
+    it "returns true if called and guesser has exceeded the max count of wrong guesses" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.wrong_char_guesses = Set.new(['i', 'o', 'z', 'b'])
+      game.word_guesses = ['daddy', 'eagle', 'cabin']
+      expect(game.did_guesser_lose?).to eq(true)
+    end
+  end
+
+  describe "did_guesser_win?" do
+    it "returns false if called and guesser has made less than the max count of wrong guesses" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
+      game.word_guesses = ['daddy', 'eagle']
+      expect(game.did_guesser_win?).to eq(false)
+    end
+
+    it "returns false if called and guesser has made exactly the max count of wrong guesses" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
+      game.word_guesses = ['daddy', 'eagle', 'cabin']
+      expect(game.did_guesser_win?).to eq(false)
+    end
+
+    it "returns false if called and guesser has made exactly the max count of wrong guesses but made the correct word guess" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
+      game.word_guesses = ['daddy', 'eagle', 'early', 'apple']
+      expect(game.did_guesser_win?).to eq(false)
+    end
+
+    it "returns true if called and guesser has made 1 less than the max count of wrong guesses and made the correct word guess" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
+      game.word_guesses = ['daddy', 'eagle', 'apple']
+      expect(game.did_guesser_win?).to eq(true)
+    end
+
+    it "returns true if called and guesser has guessed the correct word on the first try" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.word_guesses = ['apple']
+      expect(game.did_guesser_win?).to eq(true)
+    end
+
+    it "returns true if called and guesser has guessed all the letters of the correct word" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.correct_char_guesses = Set.new(['a', 'p', 'l', 'e'])
+      expect(game.did_guesser_win?).to eq(true)
+    end
+  end
+
+  # TODO
+  describe "update_game" do
+    it "adds a correct letter if called with a hash containing a letter that is in the word" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      expect(game.correct_char_guesses.size).to eq(0)
+
+      game.update_game({ data: 'p', type: :char_guess })
+      has_char = game.correct_char_guesses.include?('p')
+      expect(has_char).to eq(true)
+      expect(game.correct_char_guesses.size).to eq(1)
+    end
+
+    it "adds a wrong letter if called with a hash containing a letter that is not in the word" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      expect(game.wrong_char_guesses.size).to eq(0)
+
+      game.update_game({ data: 'z', type: :char_guess })
+      has_char = game.wrong_char_guesses.include?('z')
+      expect(has_char).to eq(true)
+      expect(game.wrong_char_guesses.size).to eq(1)
+    end
+
+    it "does nothing if called with a hash containing a letter that has been correctly guessed already" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.correct_char_guesses = Set.new(['a'])
+      expect(game.correct_char_guesses.size).to eq(1)
+      has_char = game.correct_char_guesses.include?('a')
+
+      game.update_game({ data: 'a', type: :char_guess })
+      expect(game.correct_char_guesses.size).to eq(1)
+    end
+
+    it "does nothing if called with a hash containing a letter that has been wrongly guessed already" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      game.wrong_char_guesses = Set.new(['z'])
+      expect(game.wrong_char_guesses.size).to eq(1)
+      has_char = game.wrong_char_guesses.include?('z')
+
+      game.update_game({ data: 'z', type: :char_guess })
+      expect(game.wrong_char_guesses.size).to eq(1)
+    end
+
+    it "adds a word guess if called with a hash containing a word guess that is not the word" do
+      game = Game.new(WordsList)
+      game.word = 'apple'
+      expect(game.word_guesses.size).to eq(0)
+
+      game.update_game({ data: 'eagle', type: :word_guess })
+      has_word = game.word_guesses.include?('eagle')
+      expect(has_word).to eq(true)
+      expect(game.word_guesses.size).to eq(1)
+    end
+  end
 
   describe "get_random_word" do
     it "returns a random English word with only alphabet chars and of a valid size" do
