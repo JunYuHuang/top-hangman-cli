@@ -64,7 +64,6 @@ class Game
     @max_word_size = 12
     @word = ""
     @max_wrong_guesses = 6
-    @wrong_guesses = 0
     @wrong_char_guesses = Set.new
     @correct_char_guesses = Set.new
     @word_guesses = []
@@ -75,11 +74,11 @@ class Game
   attr_reader(:max_word_size)
   attr_accessor(:word)
   attr_reader(:max_wrong_guesses)
-  attr_accessor(:wrong_guesses)
   attr_accessor(:wrong_char_guesses)
   attr_accessor(:correct_char_guesses)
   attr_accessor(:word_guesses)
 
+  # TODO - to test manually
   def play
     # TODO
   end
@@ -114,16 +113,16 @@ class Game
     true
   end
 
+  # TODO - write tests for
   def count_wrong_guesses
-    # TODO
+    wrong_word_guesses = @word_guesses.select { |w| w != @word }
+    guesses = @wrong_char_guesses.size + wrong_word_guesses.size
   end
 
   # TODO - write tests for
   def did_guesser_lose?
-    # wrong_word_guesses = @word_guesses.select { |w| w != @word }
-    # guesses = @wrong_char_guesses.size + wrong_word_guesses.size
-    # guesses >= @max_wrong_guesses
-    @wrong_guesses >= @max_wrong_guesses
+    # TODO
+    # @wrong_guesses >= @max_wrong_guesses
   end
 
   # TODO - write tests for
@@ -138,35 +137,72 @@ class Game
     words[random_pos]
   end
 
+  # TODO - to test manually
   def get_guesser_input
-    # TODO - to test manually
+    # TODO
   end
 
+  # TODO - write tests for
   def update_game(input)
     # TODO
   end
 
+  # TODO - to test manually
   def print_hangman
-    # TODO
+    puts("#{@@wrong_guesses_to_hangman[count_wrong_guesses]}\n")
   end
 
+  # TODO - to test manually
   def print_masked_word
-    # TODO
+    word = get_masked_word.join(' ')
+    puts("#{word}\n")
   end
 
+  # TODO - to test manually
   def print_wrong_char_guesses
-    # TODO
+    res = @wrong_char_guesses.to_a.sort.to_s.slice(1..-2)
+    puts("#{res}\n")
   end
 
+  # TODO - to test manually
   def print_wrong_guess_tries_left
-    # TODO
+    puts("Wrong guess attempts left: #{count_wrong_guesses}\n")
   end
 
+  # TODO - to test manually
   def print_guesser_prompt(is_valid, input)
-    # TODO
+    res = [
+      "The word is #{@word.size} alphabet letters long.\n",
+      "#{is_valid ? '' : "'#{input}' is not a valid guess. Try again."}\n",
+      "Enter your guess as a single letter or as a whole word:\n"
+    ]
+    puts(res.join)
   end
 
+  # TODO - to test manually
   def print_game_end_result
-    # TODO
+    player_result_msg = did_guesser_win ? "You guessed the word!" : "Better luck next time."
+    res = [
+      "Game ended: #{player_result_msg}\n",
+      "The word was '#{@word.upcase}'.\n"
+    ]
+    puts(res.join)
+  end
+
+  # TODO - to test manually
+  def print_game_over_screen
+    print_hangman
+    print_masked_word
+    print_wrong_char_guesses
+    print_game_end_result
+  end
+
+  # TODO - to test manually
+  def print_guesser_turn_screen(is_valid, input)
+    print_hangman
+    print_masked_word
+    print_wrong_char_guesses
+    print_wrong_guess_tries_left
+    print_guesser_prompt(is_valid, input)
   end
 end
