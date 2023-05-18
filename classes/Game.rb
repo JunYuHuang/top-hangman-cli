@@ -1,33 +1,33 @@
 class Game
-  def initialize
+  def initialize(words_list_class)
+    @words_list_class = words_list_class
     @min_word_size = 5
     @max_word_size = 12
     @word = ""
-    @masked_word = []
     @max_wrong_guesses = 6
     @wrong_char_guesses = Set.new
     @correct_char_guesses = Set.new
     @word_guesses = []
-
-    attr_reader(:min_word_size)
-    attr_reader(:max_word_size)
-    attr_accessor(:word)
-    attr_accessor(:masked_word)
-    attr_reader(:max_wrong_guesses)
-    attr_accessor(:wrong_char_guesses)
-    attr_accessor(:correct_char_guesses)
-    attr_accessor(:word_guesses)
   end
+
+  attr_reader(:words_list_class)
+  attr_reader(:min_word_size)
+  attr_reader(:max_word_size)
+  attr_accessor(:word)
+  attr_reader(:max_wrong_guesses)
+  attr_accessor(:wrong_char_guesses)
+  attr_accessor(:correct_char_guesses)
+  attr_accessor(:word_guesses)
 
   def play
     # TODO
   end
 
   def is_word_set?
-    # TODO
+    @word.size >= min_word_size && @word.size <= max_word_size
   end
 
-  def set_masked_word
+  def get_masked_word
     # TODO
   end
 
