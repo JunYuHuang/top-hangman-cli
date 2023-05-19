@@ -141,7 +141,8 @@ class Game
   end
 
   def get_random_word
-    words = @words_list.get_list([@min_word_size, @max_word_size])
+    file_path = "assets/" + @words_list.file_name
+    words = @words_list.get_list(file_path, [@min_word_size, @max_word_size])
     random_pos = Random.new.rand(0..words.size - 1)
     words[random_pos]
   end
