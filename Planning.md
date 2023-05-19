@@ -43,7 +43,7 @@
   - load screen
     - TODO
 
-## Game Logic and Basic Pseudocode
+## Game Logic and Basic Pseudocode v1
 
 - if there are any existing local game save files
   - prompt human player to either
@@ -122,9 +122,36 @@
       - revealed word message
     - return to break out of outer game loop
 
+## Game Logic and Basic Pseudocode v2
+
+- if there are any existing local game save files
+  - prompt human player to either
+    - start a new game OR
+    - load from an existing game file
+  - if human player requested to load a game file
+    - display a "table" of existing save files
+    - prompt player for which game file to load
+    - while entered game file id is invalid,
+      - prompt again for a valid game to load
+    - load the game file
+  - else start a new game
+- while game is not over
+  - if word has not been set
+    - set it from a randomly selected word from dictionary text file
+  - get input from human player (guesser)
+    - do something based on what the input is
+    - if the input is a valid guess (single letter or word)
+      - update game state
+    - else if the input is a valid command to save the current game i.e. `!save`
+      - save the current game's state as a new save file under `/saves/save_{save_count}.yaml`
+      - display something in the next turn screen that indicates that the game was saved successfully as `save_{save_count}`
+  - if guesser won or lost
+    - print game end summary screen
+    - return and exit game
+
 ## Expanded Pseudocode / Partial Code
 
-- `WordsList` module
+- `WordsList` module or module
   - `PATH_TO_FILE`: string that points to word list from `classes/index.rb` file
   - get_list(size_range, limit = none)
     - returns a string array that passes all the range specified in the `size_range` array
@@ -135,7 +162,8 @@
     - returns unfiltered list if `size_range` or `limit` does not meet criteria above
 
 - `Game` class
-  - includes `WordsList` module
+  - includes `WordsList` module or class
+  - includes `GameSaves` moduel or class
   - constructor()
     - @`min_word_size`: int = 5
     - @`max_word_size`: int = 12
@@ -181,8 +209,19 @@
   - print_game_end_result()
     - TODO
 
-- `SaveManager` module
-  - TODO
+- `GameSave` class
+  - constructor(saves_path)
+    - TODO
+  - does_exist?(save_name)
+    - TODO
+  - count
+    - TODO
+  - create(game_state)
+    - TODO
+  - open(save_name)
+    - TODO
+  - get_name_list(limit = 0)
+    - TODO
 
 ## UI Design
 
@@ -201,7 +240,29 @@ C _ C _ _ _ E
 
 F, G, H, J, K
 
-Wrong guess attempts left: 1
+Wrong guess attempts left: 5
+The word is 7 English alphabet characters long.
 
 Enter your guess:
+```
+
+### Home Menu Screen (appears if have 1+ save files)
+
+```
+ _____________________
+| Hangman Game Saves  |
+|_____________________|
+| save_1              |
+| save_2              |
+| <empty slot>        |
+| and 0 more saves... |
+|_____________________|
+
+You have 3 Hangman game save files.
+Load a game from a save file or start a new game.
+
+Enter '!new' to start a new game.
+Enter '!load <save file name>' to resume playing from a game save.
+'!loadz' is not a valid choice. Try again.
+Enter your choice (without quotes):
 ```
