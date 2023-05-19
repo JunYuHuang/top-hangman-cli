@@ -31,7 +31,8 @@ ruby index.rb
 gem install rspec
 
 cd specs
-rspec index.spec.rb
+rspec Game.spec.rb
+repec WordsList.spec.rb
 ```
 
 ## Skills Demonstrated
