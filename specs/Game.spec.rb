@@ -159,6 +159,7 @@ RSpec.describe "Game" do
   describe "did_guesser_lose?" do
     it "returns false if called and guesser has made less than the max count of wrong guesses" do
       game = Game.new(WordsList)
+      game.max_wrong_guesses = 6
       game.word = 'apple'
       game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
       game.word_guesses = ['daddy', 'eagle']
@@ -167,6 +168,7 @@ RSpec.describe "Game" do
 
     it "returns false if called and guesser has made 1 less than the max count of wrong guesses and made the correct word guess" do
       game = Game.new(WordsList)
+      game.max_wrong_guesses = 6
       game.word = 'apple'
       game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
       game.word_guesses = ['daddy', 'eagle', 'apple']
@@ -175,6 +177,7 @@ RSpec.describe "Game" do
 
     it "returns true if called and guesser has made exactly the max count of wrong guesses" do
       game = Game.new(WordsList)
+      game.max_wrong_guesses = 6
       game.word = 'apple'
       game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
       game.word_guesses = ['daddy', 'eagle', 'cabin']
@@ -183,6 +186,7 @@ RSpec.describe "Game" do
 
     it "returns true if called and guesser has exceeded the max count of wrong guesses" do
       game = Game.new(WordsList)
+      game.max_wrong_guesses = 6
       game.word = 'apple'
       game.wrong_char_guesses = Set.new(['i', 'o', 'z', 'b'])
       game.word_guesses = ['daddy', 'eagle', 'cabin']
@@ -193,6 +197,7 @@ RSpec.describe "Game" do
   describe "did_guesser_win?" do
     it "returns false if called and guesser has made less than the max count of wrong guesses" do
       game = Game.new(WordsList)
+      game.max_wrong_guesses = 6
       game.word = 'apple'
       game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
       game.word_guesses = ['daddy', 'eagle']
@@ -201,6 +206,7 @@ RSpec.describe "Game" do
 
     it "returns false if called and guesser has made exactly the max count of wrong guesses" do
       game = Game.new(WordsList)
+      game.max_wrong_guesses = 6
       game.word = 'apple'
       game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
       game.word_guesses = ['daddy', 'eagle', 'cabin']
@@ -209,6 +215,7 @@ RSpec.describe "Game" do
 
     it "returns false if called and guesser has made exactly the max count of wrong guesses but made the correct word guess" do
       game = Game.new(WordsList)
+      game.max_wrong_guesses = 6
       game.word = 'apple'
       game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
       game.word_guesses = ['daddy', 'eagle', 'early', 'apple']
@@ -217,6 +224,7 @@ RSpec.describe "Game" do
 
     it "returns true if called and guesser has made 1 less than the max count of wrong guesses and made the correct word guess" do
       game = Game.new(WordsList)
+      game.max_wrong_guesses = 6
       game.word = 'apple'
       game.wrong_char_guesses = Set.new(['i', 'o', 'z'])
       game.word_guesses = ['daddy', 'eagle', 'apple']
@@ -225,6 +233,7 @@ RSpec.describe "Game" do
 
     it "returns true if called and guesser has guessed the correct word on the first try" do
       game = Game.new(WordsList)
+      game.max_wrong_guesses = 6
       game.word = 'apple'
       game.word_guesses = ['apple']
       expect(game.did_guesser_win?).to eq(true)
@@ -232,13 +241,13 @@ RSpec.describe "Game" do
 
     it "returns true if called and guesser has guessed all the letters of the correct word" do
       game = Game.new(WordsList)
+      game.max_wrong_guesses = 6
       game.word = 'apple'
       game.correct_char_guesses = Set.new(['a', 'p', 'l', 'e'])
       expect(game.did_guesser_win?).to eq(true)
     end
   end
 
-  # TODO
   describe "update_game" do
     it "adds a correct letter if called with a hash containing a letter that is in the word" do
       game = Game.new(WordsList)
