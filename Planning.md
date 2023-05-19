@@ -58,17 +58,6 @@
   - if word has not been set
     - prompt word setter player (computer) for word
     - computer should read from the text file and randomly select a single word that meets the specified params (word should be of size in range \[5, 12])
-  - if the word guesser lost
-    - met if word guesser meets the max wrong guess limit
-      - \# wrong char guesses + \# wrong word guesses == max wrong guess limit
-    - game is over and word setter won
-    - display
-      - hangman ASCII art / string
-      - partially revealed word
-      - wrong char guesses (if any)
-      - loser message (computer player won)
-      - revealed word message
-    - return to break out of outer game loop
   - input = nil
   - while true
     - display
@@ -121,6 +110,17 @@
       - word guesser winner message
       - revealed word message
     - return out of outer game loop
+  - if the word guesser lost
+    - met if word guesser meets the max wrong guess limit
+      - \# wrong char guesses + \# wrong word guesses == max wrong guess limit
+    - game is over and word setter won
+    - display
+      - hangman ASCII art / string
+      - partially revealed word
+      - wrong char guesses (if any)
+      - loser message (computer player won)
+      - revealed word message
+    - return to break out of outer game loop
 
 ## Expanded Pseudocode / Partial Code
 
