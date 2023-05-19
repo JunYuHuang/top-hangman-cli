@@ -1,9 +1,15 @@
 class WordsList
-  PATH_TO_LIST = "assets/google-10000-english-no-swears.txt"
+  @@file_name = "google-10000-english-no-swears.txt"
+  FALLBACK_WORDS = ["worthless"]
 
-  def self.get_list(size_range, limit = 0)
-    # temp commented out below guard clause until can figure out how to read and parse the string input from the text file in `PATH_TO_LIST`
-    # return [] unless File.exists?(PATH_TO_LIST)
+  def self.file_name
+    @@file_name
+  end
+
+  def self.get_list(file_path = @@file_name, size_range = [], limit = 0)
+    return FALLBACK_WORDS unless File.exist?(file_path)
+
+    puts('Failed to find text file')
 
     min_size, max_size = size_range
     is_valid_size_range = true
@@ -18,22 +24,23 @@ class WordsList
 
     is_valid_limit = limit.class == Integer && limit > 0
 
-    # TODO - open file and add every word as an element to an array
-    # File.open(PATH_TO_LIST, "r")
+    res = []
+    word_list = File.open(file_path, "r")
 
-    res = ["crack", "submarine", "balloon", "triangle", "computer"]
-
-    if is_valid_size_range
-      min_size, max_size = size_range
-      res = res.select { |word|
-        word.size >= min_size && word.size <= max_size
-      }
+    until word_list.eof?
+      word = word_list.readline.chomp
+      if (is_valid_size_range &&
+        (word.size > max_size ||
+        word.size < min_size))
+        next
+      end
+      res.push(word)
     end
 
-    if is_valid_limit
-      res = res.take(limit)
-    end
+    word_list.close
 
-    res
+    res = res.take(limit) if is_valid_limit
+
+    res.size == 0 ? ["example"] : res
   end
 end
