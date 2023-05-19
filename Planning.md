@@ -223,6 +223,23 @@
   - get_name_list(limit = 0)
     - TODO
 
+### Serialized Game State Data Structure for Game Loading / Saving (YAML)
+
+```yaml
+meta:
+  id: 1
+  name: "save_1"
+  timestamp: "2023-05-19"
+game:
+  min_word_size: 5
+  max_word_size: 12
+  word: "excellent"
+  max_wrong_guesses: 10
+  wrong_char_guesses: [ "a", "o", "u"]
+  correct_char_guesses: [ "e" ]
+  word_guesses: [ "eagarness", "wordiness" ]
+```
+
 ## UI Design
 
 ### Turn Screen
@@ -254,7 +271,7 @@ Enter your guess:
 |_____________________|
 | save_1              |
 | save_2              |
-| <empty slot>        |
+| save_3              |
 | and 0 more saves... |
 |_____________________|
 
