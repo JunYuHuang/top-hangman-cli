@@ -1,52 +1,81 @@
+require 'yaml'
+
 class GameSave
   def initialize(saves_path = "../saves")
-    # TODO
-    # sets the correct path to look for game saves in
+    @saves_path = saves_path
   end
 
+  attr_accessor(:saves_path)
+
   def does_folder_exist?
-    # TODO
-    # returns true if the saves folder `../saves/` exists else false
+    Dir.exist?(@saves_path)
   end
 
   def create_folder
-    # TODO
-    # creates the `saves` folder at @saves_path
+    Dir.mkdir(@saves_path)
   end
 
   def does_save_exist?(save_name)
-    # TODO
-    # returns true if a `save_name` exists as a save file in `../saves/` else false
+    return false unless does_folder_exist?
+    File.exist?("#{@saves_path}/#{save_name}.yaml")
   end
 
-  def count_saves
-    # TODO
-    # counts the number of save files in `../saves/` that follow the naming scheme `save_{non-negative integer that uniquely identifies the file}.yaml`
-    # ignores any files that don't follow the above naming scheme
+  def count_saves(saves_name_prefix = "save_")
+    return 0 unless does_folder_exist?
+    Dir.glob("#{saves_path}/#{saves_name_prefix}*.{yaml,yml}").length
   end
 
-  def create_save(game_state)
-    # TODO
-    # if the saves folder does not exist, create it
-    # find a unique name for the save file
-    # - set `id` to 0
-    # - while true
-    #   - if the game save file `save_{id}` does not exist in the `saves` folder, return
-    #   - `id`++
-    # - `save_name` = `save_{id}`
-    # iterates thru the `game_state` data structure and
-    # saves the game as a .yaml save file
-    # returns the name of the newly saved name or the serialized game state object?
+  def get_unique_id(saves_name_prefix = "save_")
+    id = 0
+    loop do
+      break unless does_save_exist?("#{saves_name_prefix}#{id}")
+      id += 1
+    end
+    id
+  end
+
+  def encode(game_obj)
+    res = YAML.dump({
+      min_word_size: game_obj.min_word_size,
+      max_word_size: game_obj.max_word_size,
+      word: game_obj.word,
+      max_wrong_guesses: game_obj.max_wrong_guesses,
+      wrong_char_guesses: game_obj.wrong_char_guesses.to_a,
+      correct_char_guesses: game_obj.correct_char_guesses.to_a,
+      word_guesses: game_obj.word_guesses
+    })
+    res
+  end
+
+  def decode(string)
+    YAML.load(string)
+  end
+
+  def create_save(game_obj, saves_name_prefix = "save_")
+    create_folder unless does_folder_exist?
+    save_name = "#{saves_name_prefix}#{get_unique_id(saves_name_prefix)}"
+    save = File.new("#{saves_path}/#{save_name}.yaml", "w+")
+    save.puts(encode(game_obj))
+    save.close
+    save_name
   end
 
   def open_save(save_name)
-    # TODO
-    # opens the save file `save_name`.yaml from the `saves` folder
-    # returns the save file as some deserialized, iterable data structure
+    file = File.open("#{@saves_path}/#{save_name}.yaml", "r")
+    res = decode(file)
+    file.close
+    res
   end
 
-  def get_save_names_list(limit = 0)
-    # TODO
-    # returns a string array of the names of all save files that exist in `../saves/`
+  def get_save_names_list(saves_name_prefix = "save_", limit = 0)
+    return [] unless does_folder_exist?
+    res = Dir.glob("#{@saves_path}/#{saves_name_prefix}*.{yaml,yml}")
+    limit > 0 ? res.take(limit) : res
+  end
+
+  def delete_saves_folder
+    saves = Dir.glob("#{@saves_path}/*")
+    saves.each { |f| File.delete(f) } if saves.size > 0
+    Dir.rmdir(@saves_path) if Dir.exist?(@saves_path)
   end
 end

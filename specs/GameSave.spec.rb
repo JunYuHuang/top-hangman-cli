@@ -1,10 +1,116 @@
 require_relative 'spec_helper'
 require_relative '../classes/GameSave'
+require_relative '../classes/Game'
+require_relative '../classes/WordsList'
+
+def delete_saves_folder(folder_path)
+  saves = Dir.glob("#{folder_path}/*")
+  saves.each { |f| File.delete(f) } if saves.size > 0
+  Dir.rmdir(folder_path) if Dir.exist?(folder_path)
+end
+
+def create_test_saves(folder_path, saves_count)
+  Dir.mkdir(folder_path) unless Dir.exist?(folder_path)
+  saves_count.times do |i|
+    save = File.new("#{folder_path}/test_save_#{i}.yaml", "w+")
+    save.puts("# test save file #{i}")
+    save.close
+  end
+end
 
 RSpec.describe "GameSave Class" do
-  describe "TODO" do
-    it "TODO" do
-      # TODO
+  describe "initialize" do
+    it "works" do
+      game_save = GameSave.new
+      expect(game_save.saves_path).to eq("../saves")
+    end
+  end
+
+  describe "does_save_exist?" do
+    it "returns false if called and the `saves` folder is not present" do
+      game_save = GameSave.new
+      folder = game_save.saves_path
+      delete_saves_folder(folder)
+      expect(game_save.does_save_exist?('test_save_0')).to eq(false)
+    end
+
+    it "returns false if called and the `saves` folder is present and empty" do
+      game_save = GameSave.new
+      folder = game_save.saves_path
+      delete_saves_folder(folder)
+      Dir.mkdir(folder)
+      expect(game_save.does_save_exist?('test_save_0')).to eq(false)
+    end
+
+    it "returns true if called with 'test_save_0' and the file '../saves/test_save_0.yaml' exists" do
+      game_save = GameSave.new
+      folder = game_save.saves_path
+      delete_saves_folder(folder)
+      create_test_saves(folder, 1)
+      expect(game_save.does_save_exist?('test_save_0')).to eq(true)
+    end
+  end
+
+  describe "count_saves" do
+    it "returns 3 if called and the `saves` folder has 3 saves files" do
+      game_save = GameSave.new
+      folder = game_save.saves_path
+      delete_saves_folder(folder)
+      create_test_saves(folder, 3)
+      expect(game_save.count_saves("test_save_")).to eq(3)
+    end
+  end
+
+  describe "get_unique_id" do
+    it "returns 3 if called and the `saves` folder has 3 saves files" do
+      game_save = GameSave.new
+      folder = game_save.saves_path
+      delete_saves_folder(folder)
+      create_test_saves(folder, 3)
+      expect(game_save.get_unique_id("test_save_")).to eq(3)
+    end
+  end
+
+  describe "create_save" do
+    it "returns the correct hash if called with a new Game object" do
+      game_save = GameSave.new
+      folder = game_save.saves_path
+      delete_saves_folder(folder)
+      create_test_saves(folder, 2)
+
+      game = Game.new(WordsList)
+      res_name = game_save.create_save(game, "test_save_")
+      expect(res_name).to eq("test_save_2")
+    end
+  end
+
+  describe "open_save" do
+    it "returns the correct hash if called with a new Game object" do
+      game_save = GameSave.new
+      folder = game_save.saves_path
+      delete_saves_folder(folder)
+      create_test_saves(folder, 1)
+
+      game = Game.new(WordsList)
+      save_name = game_save.create_save(game, "test_save_")
+      res = game_save.open_save(save_name)
+      expect(res.class).to eq(Hash)
+      expect(res[:word]).to eq("")
+    end
+  end
+
+  describe "get_save_names_list" do
+    it "returns the correct array if called and the `saves` folder has 3 saves files" do
+      game_save = GameSave.new
+      folder = game_save.saves_path
+      delete_saves_folder(folder)
+      create_test_saves(folder, 3)
+      expected = [
+        "#{folder}/test_save_0.yaml",
+        "#{folder}/test_save_1.yaml",
+        "#{folder}/test_save_2.yaml"
+      ]
+      expect(game_save.get_save_names_list("test_save_")).to eq(expected)
     end
   end
 end
