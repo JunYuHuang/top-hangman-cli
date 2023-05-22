@@ -9,8 +9,6 @@ class WordsList
   def self.get_list(file_path = @@file_name, size_range = [], limit = 0)
     return FALLBACK_WORDS unless File.exist?(file_path)
 
-    puts('Failed to find text file')
-
     min_size, max_size = size_range
     is_valid_size_range = true
     if (size_range.class != Array or
