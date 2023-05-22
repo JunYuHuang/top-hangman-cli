@@ -7,6 +7,10 @@ class GameSave
 
   attr_accessor(:saves_path)
 
+  def get_saves_path
+    @saves_path
+  end
+
   def does_folder_exist?
     Dir.exist?(@saves_path)
   end
