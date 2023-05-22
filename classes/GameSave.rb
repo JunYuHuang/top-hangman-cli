@@ -70,6 +70,9 @@ class GameSave
   def get_save_names_list(saves_name_prefix = "save_", limit = 0)
     return [] unless does_folder_exist?
     res = Dir.glob("#{@saves_path}/#{saves_name_prefix}*.{yaml,yml}")
+    res = res.map do |save_path|
+      save_path.delete_prefix("#{saves_path}/").delete_suffix(".yaml")
+    end
     limit > 0 ? res.take(limit) : res
   end
 

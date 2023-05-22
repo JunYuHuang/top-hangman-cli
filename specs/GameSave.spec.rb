@@ -106,9 +106,9 @@ RSpec.describe "GameSave Class" do
       delete_saves_folder(folder)
       create_test_saves(folder, 3)
       expected = [
-        "#{folder}/test_save_0.yaml",
-        "#{folder}/test_save_1.yaml",
-        "#{folder}/test_save_2.yaml"
+        "test_save_0",
+        "test_save_1",
+        "test_save_2"
       ]
       expect(game_save.get_save_names_list("test_save_")).to eq(expected)
     end
