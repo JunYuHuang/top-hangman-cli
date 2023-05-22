@@ -112,6 +112,8 @@ class Game
     @wrong_char_guesses = Set.new
     @correct_char_guesses = Set.new
     @word_guesses = []
+    @game_saves = nil
+    @commands = Set.new(["!new", "!save"])
   end
 
   attr_reader(:words_list)
@@ -122,6 +124,8 @@ class Game
   attr_accessor(:wrong_char_guesses)
   attr_accessor(:correct_char_guesses)
   attr_accessor(:word_guesses)
+  attr_accessor(:game_saves)
+  attr_reader(:commands)
 
   def play
     loop do
@@ -129,7 +133,7 @@ class Game
         @word = get_random_word
       end
 
-      update_game(get_guesser_input)
+      process_input(get_guesser_input)
 
       if did_guesser_win? || did_guesser_lose?
         print_game_over_screen
@@ -208,7 +212,7 @@ class Game
     end
   end
 
-  def update_game(guesser_input)
+  def process_input(guesser_input)
     guesser_input => { data:, type: }
 
     case type
@@ -224,6 +228,20 @@ class Game
       @word_guesses.push(data)
       @correct_char_guesses.merge(data.split('')) if data == @word
     end
+  end
+
+  def use_game_save(game_save_obj)
+    @game_saves = game_save_obj
+  end
+
+  def is_valid_command?(input)
+    return false if !@game_saves
+    args = input.split(" ")
+    return false if args.size > 2
+    return @commands.include?(args[0].downcase) if args.size == 1
+    load_command, save_name = args
+    return false if load_command.downcase != "!load"
+    @game_saves.does_save_exist?(save_name.downcase)
   end
 
   def clear_console

@@ -1,6 +1,7 @@
 require_relative 'spec_helper'
 require_relative '../classes/Game'
 require_relative '../classes/WordsList'
+require_relative '../classes/GameSave'
 
 RSpec.describe "Game" do
   describe "initialize" do
@@ -248,13 +249,13 @@ RSpec.describe "Game" do
     end
   end
 
-  describe "update_game" do
+  describe "process_input" do
     it "adds a correct letter if called with a hash containing a letter that is in the word" do
       game = Game.new(WordsList)
       game.word = 'apple'
       expect(game.correct_char_guesses.size).to eq(0)
 
-      game.update_game({ data: 'p', type: :char_guess })
+      game.process_input({ data: 'p', type: :char_guess })
       has_char = game.correct_char_guesses.include?('p')
       expect(has_char).to eq(true)
       expect(game.correct_char_guesses.size).to eq(1)
@@ -265,7 +266,7 @@ RSpec.describe "Game" do
       game.word = 'apple'
       expect(game.wrong_char_guesses.size).to eq(0)
 
-      game.update_game({ data: 'z', type: :char_guess })
+      game.process_input({ data: 'z', type: :char_guess })
       has_char = game.wrong_char_guesses.include?('z')
       expect(has_char).to eq(true)
       expect(game.wrong_char_guesses.size).to eq(1)
@@ -278,7 +279,7 @@ RSpec.describe "Game" do
       expect(game.correct_char_guesses.size).to eq(1)
       has_char = game.correct_char_guesses.include?('a')
 
-      game.update_game({ data: 'a', type: :char_guess })
+      game.process_input({ data: 'a', type: :char_guess })
       expect(game.correct_char_guesses.size).to eq(1)
     end
 
@@ -289,7 +290,7 @@ RSpec.describe "Game" do
       expect(game.wrong_char_guesses.size).to eq(1)
       has_char = game.wrong_char_guesses.include?('z')
 
-      game.update_game({ data: 'z', type: :char_guess })
+      game.process_input({ data: 'z', type: :char_guess })
       expect(game.wrong_char_guesses.size).to eq(1)
     end
 
@@ -298,10 +299,73 @@ RSpec.describe "Game" do
       game.word = 'apple'
       expect(game.word_guesses.size).to eq(0)
 
-      game.update_game({ data: 'eagle', type: :word_guess })
+      game.process_input({ data: 'eagle', type: :word_guess })
       has_word = game.word_guesses.include?('eagle')
       expect(has_word).to eq(true)
       expect(game.word_guesses.size).to eq(1)
+    end
+  end
+
+  describe "use_game_save" do
+    it "works if called" do
+      game = Game.new(WordsList)
+      game.use_game_save(GameSave.new)
+      expect(game.game_saves).not_to eq(nil)
+    end
+  end
+
+  describe "is_valid_command?" do
+    it "returns false if called with any string and Game class object is missing the GameSave class object dependency injection" do
+      game = Game.new(WordsList)
+      expect(game.is_valid_command?("!new")).to eq(false)
+    end
+
+    it "returns false if called with an invalid command string" do
+      game = Game.new(WordsList)
+      game.use_game_save(GameSave.new)
+      expect(game.is_valid_command?("new")).to eq(false)
+    end
+
+    it "returns false if called with an command string is separated by more than 2 whitespace chars" do
+      game = Game.new(WordsList)
+      game.use_game_save(GameSave.new)
+      expect(game.is_valid_command?("n e w")).to eq(false)
+    end
+
+    it "returns false if called with an command string is separated by more than 2 whitespace chars" do
+      game = Game.new(WordsList)
+      game.use_game_save(GameSave.new)
+      expect(game.is_valid_command?("n e w")).to eq(false)
+    end
+
+    it "returns false if called with an invalid 1-word command string" do
+      game = Game.new(WordsList)
+      game.use_game_save(GameSave.new)
+      expect(game.is_valid_command?("!newz")).to eq(false)
+    end
+
+    it "returns false if called with an 2-word command string whose 1st word is not '!load'" do
+      game = Game.new(WordsList)
+      game.use_game_save(GameSave.new)
+      expect(game.is_valid_command?("!laad 1")).to eq(false)
+    end
+
+    it "returns false if called with '!load asdf' and the save file 'asdf' does not exist" do
+      game = Game.new(WordsList)
+      game.use_game_save(GameSave.new)
+      expect(game.is_valid_command?("!load asdf")).to eq(false)
+    end
+
+    it "returns true if called with '!NEW'" do
+      game = Game.new(WordsList)
+      game.use_game_save(GameSave.new)
+      expect(game.is_valid_command?("!NEW")).to eq(true)
+    end
+
+    it "returns true if called with '!sAvE'" do
+      game = Game.new(WordsList)
+      game.use_game_save(GameSave.new)
+      expect(game.is_valid_command?("!sAvE")).to eq(true)
     end
   end
 
