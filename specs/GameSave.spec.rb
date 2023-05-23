@@ -21,21 +21,21 @@ end
 RSpec.describe "GameSave Class" do
   describe "initialize" do
     it "works" do
-      game_save = GameSave.new
-      expect(game_save.saves_path).to eq("../saves")
+      game_save = GameSave.new("../test_saves")
+      expect(game_save.saves_path).to eq("../test_saves")
     end
   end
 
   describe "does_save_exist?" do
     it "returns false if called and the `saves` folder is not present" do
-      game_save = GameSave.new
+      game_save = GameSave.new("../test_saves")
       folder = game_save.saves_path
       delete_saves_folder(folder)
       expect(game_save.does_save_exist?('test_save_0')).to eq(false)
     end
 
     it "returns false if called and the `saves` folder is present and empty" do
-      game_save = GameSave.new
+      game_save = GameSave.new("../test_saves")
       folder = game_save.saves_path
       delete_saves_folder(folder)
       Dir.mkdir(folder)
@@ -43,7 +43,7 @@ RSpec.describe "GameSave Class" do
     end
 
     it "returns true if called with 'test_save_0' and the file '../saves/test_save_0.yaml' exists" do
-      game_save = GameSave.new
+      game_save = GameSave.new("../test_saves")
       folder = game_save.saves_path
       delete_saves_folder(folder)
       create_test_saves(folder, 1)
@@ -53,7 +53,7 @@ RSpec.describe "GameSave Class" do
 
   describe "count_saves" do
     it "returns 3 if called and the `saves` folder has 3 saves files" do
-      game_save = GameSave.new
+      game_save = GameSave.new("../test_saves")
       folder = game_save.saves_path
       delete_saves_folder(folder)
       create_test_saves(folder, 3)
@@ -63,7 +63,7 @@ RSpec.describe "GameSave Class" do
 
   describe "get_unique_id" do
     it "returns 3 if called and the `saves` folder has 3 saves files" do
-      game_save = GameSave.new
+      game_save = GameSave.new("../test_saves")
       folder = game_save.saves_path
       delete_saves_folder(folder)
       create_test_saves(folder, 3)
@@ -73,7 +73,7 @@ RSpec.describe "GameSave Class" do
 
   describe "create_save" do
     it "returns the correct hash if called with a new Game object" do
-      game_save = GameSave.new
+      game_save = GameSave.new("../test_saves")
       folder = game_save.saves_path
       delete_saves_folder(folder)
       create_test_saves(folder, 2)
@@ -86,7 +86,7 @@ RSpec.describe "GameSave Class" do
 
   describe "open_save" do
     it "returns the correct hash if called with a new Game object" do
-      game_save = GameSave.new
+      game_save = GameSave.new("../test_saves")
       folder = game_save.saves_path
       delete_saves_folder(folder)
       create_test_saves(folder, 1)
@@ -101,7 +101,7 @@ RSpec.describe "GameSave Class" do
 
   describe "get_save_names_list" do
     it "returns the correct array if called and the `saves` folder has 3 saves files" do
-      game_save = GameSave.new
+      game_save = GameSave.new("../test_saves")
       folder = game_save.saves_path
       delete_saves_folder(folder)
       create_test_saves(folder, 3)
