@@ -226,18 +226,13 @@
 ### Serialized Game State Data Structure for Game Loading / Saving (YAML)
 
 ```yaml
-meta:
-  id: 1
-  name: "save_1"
-  timestamp: "2023-05-19"
-game:
-  min_word_size: 5
-  max_word_size: 12
-  word: "excellent"
-  max_wrong_guesses: 10
-  wrong_char_guesses: [ "a", "o", "u"]
-  correct_char_guesses: [ "e" ]
-  word_guesses: [ "eagarness", "wordiness" ]
+min_word_size: 5
+max_word_size: 12
+word: "excellent"
+max_wrong_guesses: 10
+wrong_char_guesses: [ "a", "o", "u"]
+correct_char_guesses: [ "e" ]
+word_guesses: [ "eagarness", "wordiness" ]
 ```
 
 ## UI Design
