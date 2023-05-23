@@ -32,7 +32,8 @@ gem install rspec
 
 cd specs
 rspec Game.spec.rb
-repec WordsList.spec.rb
+rspec WordsList.spec.rb
+rspec GameSave.spec.rb
 ```
 
 ## Skills Demonstrated

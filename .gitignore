@@ -57,3 +57,4 @@ build-iPhoneSimulator/
 
 # my custom ignores
 /saves/
+/test_saves/
