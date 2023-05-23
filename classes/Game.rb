@@ -168,6 +168,8 @@ class Game
       add_notice(message)
     end
 
+    add_notice("✅ Started a new game.") unless get_last_notice
+
     @is_playing = true
 
     loop do
