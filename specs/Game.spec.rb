@@ -326,7 +326,7 @@ RSpec.describe "Game" do
   describe "use_game_save" do
     it "works if called" do
       game = Game.new(WordsList)
-      game.use_game_save(GameSave.new)
+      game.use_game_save(GameSave.new("../test_saves"))
       expect(game.game_saves).not_to eq(nil)
     end
   end
@@ -339,64 +339,64 @@ RSpec.describe "Game" do
 
     it "returns false if called with an invalid command string" do
       game = Game.new(WordsList)
-      game.use_game_save(GameSave.new)
+      game.use_game_save(GameSave.new("../test_saves"))
       expect(game.is_valid_command?("new")).to eq(false)
     end
 
     it "returns false if called with an command string is separated by more than 2 whitespace chars" do
       game = Game.new(WordsList)
-      game.use_game_save(GameSave.new)
+      game.use_game_save(GameSave.new("../test_saves"))
       expect(game.is_valid_command?("n e w")).to eq(false)
     end
 
     it "returns false if called with an invalid 1-word command string" do
       game = Game.new(WordsList)
-      game.use_game_save(GameSave.new)
+      game.use_game_save(GameSave.new("../test_saves"))
       expect(game.is_valid_command?("!newz")).to eq(false)
     end
 
     it "returns false if called with an 2-word command string whose 1st word is not '!load'" do
       game = Game.new(WordsList)
-      game.use_game_save(GameSave.new)
+      game.use_game_save(GameSave.new("../test_saves"))
       expect(game.is_valid_command?("!laad 1")).to eq(false)
     end
 
     it "returns false if called with '!load asdf' and the save file 'asdf' does not exist and game has not started" do
       game = Game.new(WordsList)
-      game.use_game_save(GameSave.new)
+      game.use_game_save(GameSave.new("../test_saves"))
       expect(game.is_valid_command?("!load asdf")).to eq(false)
     end
 
     it "returns false if called with '!new' and game has started" do
       game = Game.new(WordsList)
-      game.use_game_save(GameSave.new)
+      game.use_game_save(GameSave.new("../test_saves"))
       game.is_playing = true
       expect(game.is_valid_command?("!new")).to eq(false)
     end
 
     it "returns false if called with '!load save_1' and game has started" do
       game = Game.new(WordsList)
-      game.use_game_save(GameSave.new)
+      game.use_game_save(GameSave.new("../test_saves"))
       game.is_playing = true
       expect(game.is_valid_command?("!load save_1")).to eq(false)
     end
 
     it "returns true if called with '!sAvE' and game has started" do
       game = Game.new(WordsList)
-      game.use_game_save(GameSave.new)
+      game.use_game_save(GameSave.new("../test_saves"))
       game.is_playing = true
       expect(game.is_valid_command?("!sAvE")).to eq(true)
     end
 
     it "returns true if called with '!NEW' and game has not started" do
       game = Game.new(WordsList)
-      game.use_game_save(GameSave.new)
+      game.use_game_save(GameSave.new("../test_saves"))
       expect(game.is_valid_command?("!NEW")).to eq(true)
     end
 
     it "returns true if called with '!load test_save_0' and game has not started and and the save file 'test_save_0' exists" do
       game = Game.new(WordsList)
-      game.use_game_save(GameSave.new)
+      game.use_game_save(GameSave.new("../test_saves"))
       folder = game.game_saves.get_saves_path
       delete_saves_folder(folder)
       create_test_saves(folder, 1)
