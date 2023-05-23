@@ -24,7 +24,6 @@ class GameSave
     File.exist?("#{@saves_path}/#{save_name}.yaml")
   end
 
-  # default arg option "save_" counts both .yaml saves files that start with "test_save_" and "save_" somehow???
   def count_saves(saves_name_prefix = "save_")
     return 0 unless does_folder_exist?
     Dir.glob("#{saves_path}/#{saves_name_prefix}*.{yaml,yml}").length
