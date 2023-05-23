@@ -114,11 +114,12 @@ class Game
     @word_guesses = []
     @game_saves = nil
     @is_playing = false
+    @notices = []
   end
 
-  attr_reader(:words_list)
-  attr_reader(:min_word_size)
-  attr_reader(:max_word_size)
+  attr_accessor(:words_list)
+  attr_accessor(:min_word_size)
+  attr_accessor(:max_word_size)
   attr_accessor(:word)
   attr_accessor(:max_wrong_guesses)
   attr_accessor(:wrong_char_guesses)
@@ -126,11 +127,45 @@ class Game
   attr_accessor(:word_guesses)
   attr_accessor(:game_saves)
   attr_accessor(:is_playing)
+  attr_accessor(:notices)
 
-  # TODO - test manually
+  def update(options)
+    options => {
+      min_word_size:,
+      max_word_size:,
+      word:,
+      max_wrong_guesses:,
+      wrong_char_guesses:,
+      correct_char_guesses:,
+      word_guesses:
+    }
+    @min_word_size = min_word_size if min_word_size
+    @max_word_size = max_word_size if max_word_size
+    @word = word if word
+    @max_wrong_guesses = max_wrong_guesses if max_wrong_guesses
+    @wrong_char_guesses = Set.new(wrong_char_guesses) if wrong_char_guesses
+    @correct_char_guesses = Set.new(correct_char_guesses) if correct_char_guesses
+    @word_guesses = word_guesses if word_guesses
+    true
+  end
+
+  def get_last_notice
+    if (@notices.size == 0 or
+        (@notices.size >= 2 &&
+        @notices[-1] == @notices[-2]))
+      return nil
+    end
+    return @notices[-1]
+  end
+
+  def add_notice(notice_message)
+    @notices.push(notice_message)
+  end
+
   def play
     if @game_saves && @game_saves.count_saves("save_") > 0
-      process_input(get_start_input)
+      message = process_input(get_start_input)
+      add_notice(message)
     end
 
     @is_playing = true
@@ -138,7 +173,10 @@ class Game
     loop do
       @word = get_random_word unless is_word_set?
 
-      process_input(get_guesser_input)
+      input = get_guesser_input(get_last_notice)
+
+      message = process_input(input)
+      add_notice(message)
 
       if did_guesser_win? || did_guesser_lose?
         @is_playing = false
@@ -200,11 +238,11 @@ class Game
     words[random_pos]
   end
 
-  def get_guesser_input
+  def get_guesser_input(message)
     is_valid_input = true
     last_input = nil
     loop do
-      print_guesser_turn_screen(is_valid_input, last_input)
+      print_guesser_turn_screen(is_valid_input, last_input, message)
       guesser_input = gets.chomp.downcase
 
       if is_valid_char_guess?(guesser_input)
@@ -253,7 +291,8 @@ class Game
       @correct_char_guesses.merge(data.split('')) if data == @word
     when :command
       return unless @game_saves
-      process_command(data)
+      message = process_command(data)
+      return message
     end
   end
 
@@ -266,8 +305,8 @@ class Game
   # Valid out-of-game commands: '!new' and '!load <save_name>'
   # Valid in-game commands: '!save'
   def is_valid_command?(input)
-    input.downcase!
     return false unless @game_saves
+    input.downcase!
     return input == "!save" if @is_playing
 
     args = input.split(" ")
@@ -279,32 +318,19 @@ class Game
   end
 
 
-  def process_command(input, is_debug = false)
+  def process_command(input)
     return unless @game_saves
     command, command_arg = input.split(" ")
     case command
     when "!new"
-      return
+      return "✅ Started a new game."
     when "!save"
-      @game_saves.create_save(self, is_debug ? "test_save_" : "save_")
+      save_name = @game_saves.create_save(self)
+      return "✅ Game was saved as '#{save_name}'."
     when "!load"
-      # TODO - to fix
-      encoded_string = @game_saves.open_save(command_arg)
-      decoded_save = @game_saves.decode(encoded_string)
-      load(decoded_save)
+      @game_saves.load_save(self, command_arg)
+      return "✅ Game was loaded from save '#{command_arg}'."
     end
-  end
-
-  # TODO - test manually
-  def load(decoded_save)
-    return unless @game_saves
-    @min_word_size = decoded_save[:min_word_size]
-    @max_word_size = decoded_save[:max_word_size]
-    @word = decoded_save[:word]
-    @max_wrong_guesses = decoded_save[:max_wrong_guesses]
-    @wrong_char_guesses = Set.new(decoded_save[:wrong_char_guesses])
-    @correct_char_guesses = Set.new(decoded_save[:correct_char_guesses])
-    @word_guesses = decoded_save[:word_guesses]
   end
 
   def clear_console
@@ -337,10 +363,12 @@ class Game
     puts("Wrong guess attempts left: #{count}\n")
   end
 
-  def print_guesser_prompt(is_valid, input)
+  def print_guesser_prompt(is_valid, input, message)
+    is_valid_message = message.class == String && message.size > 0
     res = [
       "The word is #{@word.size} English alphabet characters long.\n",
-      "#{is_valid ? '' : "'#{input}' is not a valid guess or save command. Try again."}\n",
+      "#{is_valid ? '' : "❌ '#{input}' is not a valid guess or save command. Try again."}\n",
+      "#{is_valid_message ? message : ""}\n",
       "Enter your guess (letter or whole word) or '!save' to save the game:\n"
     ]
     puts(res.join)
@@ -363,13 +391,13 @@ class Game
     print_game_end_result
   end
 
-  def print_guesser_turn_screen(is_valid, input)
+  def print_guesser_turn_screen(is_valid, input, message)
     clear_console
     print_hangman
     print_masked_word
     print_wrong_char_guesses
     print_wrong_guess_tries_left
-    print_guesser_prompt(is_valid, input)
+    print_guesser_prompt(is_valid, input, message)
   end
 
   def print_saves_table
@@ -398,8 +426,8 @@ class Game
 
     more_saves = @game_saves.count_saves - save_names.size
     last_text_row = empty_row
-    if more_saves > 3
-      more_saves_text = "and #{more_saves} more saves"
+    if more_saves > 0
+      more_saves_text = "and #{more_saves} more save#{more_saves > 1 ? "s" : ""}"
       last_text_row = "| " + more_saves_text +
         " " * (row_width - more_saves_text.size - 1) + "|\n"
     end
@@ -411,11 +439,11 @@ class Game
   def print_start_prompt(is_valid, input)
     return unless @game_saves
     res = [
-      "You have #{@game_saves.count_saves} Hangman game save file(s).\n",
+      "You have #{@game_saves.count_saves} Hangman game save file#{@game_saves.count_saves == 1 ? "" : "s"}.\n",
       "Load a game from a save file or start a new game.\n\n",
       "Enter '!new' to start a new game.\n",
       "Enter '!load <save_name>' to resume playing from a game save.\n",
-      "#{ is_valid ? "" : "'#{input}' is not a valid choice or the save file does not exist. Try again."}\n",
+      "#{ is_valid ? "" : "❌ '#{input}' is not a valid choice or the save file does not exist. Try again."}\n",
       "Enter your choice (without quotes):\n"
     ]
     puts(res.join)

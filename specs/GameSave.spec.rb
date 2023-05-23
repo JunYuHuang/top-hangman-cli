@@ -99,6 +99,33 @@ RSpec.describe "GameSave Class" do
     end
   end
 
+  # TODO
+  describe "load_save" do
+    it "updates the game state if called with (game, 'save_0') and 'save_0' is a valid game save file" do
+      # delete old test save files as needed
+      game_save = GameSave.new("../test_saves")
+      folder = game_save.saves_path
+      delete_saves_folder(folder)
+
+      # emulate a game, save it, and reset the game
+      game = Game.new(WordsList)
+      game.use_game_save(game_save)
+      # game.is_playing = true
+      game.word = "example"
+      game.correct_char_guesses.merge(['a', 'e'])
+      save_name = game.game_saves.create_save(game)
+      game.word = ""
+      game.correct_char_guesses = Set.new
+
+      # load the game and check if the game's state was updated correctly
+      game.game_saves.load_save(game, save_name)
+      expect(game.word).to eq("example")
+      expect(game.correct_char_guesses.size).to eq(2)
+      expect(game.correct_char_guesses.include?('a')).to eq(true)
+      expect(game.correct_char_guesses.include?('e')).to eq(true)
+    end
+  end
+
   describe "get_save_names_list" do
     it "returns the correct array if called and the `saves` folder has 3 saves files" do
       game_save = GameSave.new("../test_saves")

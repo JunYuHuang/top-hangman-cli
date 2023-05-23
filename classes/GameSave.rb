@@ -72,6 +72,11 @@ class GameSave
     res
   end
 
+  def load_save(game_obj, save_name)
+    save_hash = open_save(save_name)
+    game_obj.update(save_hash)
+  end
+
   def get_save_names_list(saves_name_prefix = "save_", limit = 0)
     return [] unless does_folder_exist?
     res = Dir.glob("#{@saves_path}/#{saves_name_prefix}*.{yaml,yml}")
